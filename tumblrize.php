@@ -544,13 +544,17 @@ function tumblrize_custom_box () {
     <select id="tumblrize_post-type"
             name="tumblrize_post-type"
             <?php if ($tumblr_post_type && $tumblr_post_id) : print 'disabled="disabled"';endif;?>>
+            <?php
+                // Figure out which option to make selected by default.
+                $tpt = ($tumblr_post_type) ? $tumblr_post_type : get_option('tumblrize_default_type');
+            ?>
         <optgroup label="Select">
-            <option value="regular"<?php if ('regular' === $tumblr_post_type) : print ' selected="selected"';endif;?>>Text</option>
-            <option value="photo"<?php if ('photo' === $tumblr_post_type) : print ' selected="selected"';endif;?>>Photo</option>
-            <option value="link"<?php if ('link' === $tumblr_post_type) : print ' selected="selected"';endif;?>>Link</option>
-            <option value="quote"<?php if ('quote' === $tumblr_post_type) : print ' selected="selected"';endif;?>>Quote</option>
-            <option value="audio"<?php if ('audio' === $tumblr_post_type) : print ' selected="selected"';endif;?>>Audio</option>
-            <option value="video"<?php if ('video' === $tumblr_post_type) : print ' selected="selected"';endif;?>>Video (YouTube)</option>
+            <option value="regular"<?php if ('regular' === $tpt) : print ' selected="selected"';endif;?>>Text</option>
+            <option value="photo"<?php if ('photo' === $tpt) : print ' selected="selected"';endif;?>>Photo</option>
+            <option value="link"<?php if ('link' === $tpt) : print ' selected="selected"';endif;?>>Link</option>
+            <option value="quote"<?php if ('quote' === $tpt) : print ' selected="selected"';endif;?>>Quote</option>
+            <option value="audio"<?php if ('audio' === $tpt) : print ' selected="selected"';endif;?>>Audio</option>
+            <option value="video"<?php if ('video' === $tpt) : print ' selected="selected"';endif;?>>Video (YouTube)</option>
         </optgroup>
         <optgroup label="Not Implemented Yet">
             <option value="conversation">Conversation</option>
@@ -700,6 +704,26 @@ function tumblrize_options () {
             </tr>
 
             <tr valign="top">
+                <th scope="row"><label for="tumblrize_default_type">Default Tumblr Post Type</label></th>
+                <td>
+                    <select id="tumblrize_default_type" name="tumblrize_default_type">
+                        <optgroup label="Select">
+                            <option value="regular"<?php if ('regular' === get_option('tumblrize_default_type')) : print ' selected="selected"';endif;?>>Text</option>
+                            <option value="photo"<?php if ('photo' === get_option('tumblrize_default_type')) : print ' selected="selected"';endif;?>>Photo</option>
+                            <option value="link"<?php if ('link' === get_option('tumblrize_default_type')) : print ' selected="selected"';endif;?>>Link</option>
+                            <option value="quote"<?php if ('quote' === get_option('tumblrize_default_type')) : print ' selected="selected"';endif;?>>Quote</option>
+                            <option value="audio"<?php if ('audio' === get_option('tumblrize_default_type')) : print ' selected="selected"';endif;?>>Audio</option>
+                            <option value="video"<?php if ('video' === get_option('tumblrize_default_type')) : print ' selected="selected"';endif;?>>Video</option>
+                            <optgroup label="Not Implemented Yet">
+                                <option value="conversation">Conversation</option>
+                            </optgroup>
+                        </optgroup>
+                    </select>
+                    <span class="description">Select a default type. Useful if you usually publish posts of a specific type. (Defaults to <code>Text</code>.)</span>
+                </td>
+            </tr>
+
+            <tr valign="top">
                 <th scope="row"><label for="tumblrize_exclude_cats">Do not crosspost entries in these categories:</label></th>
                 <td>
                     <span class="description">Will cause posts in the specificied categories never to be crossposted to Tumblr. This is useful if, for instance, you are creating posts automatically using another plugin and wish to avoid a feedback loop of crossposting back and forth from one service to another.</span>
@@ -777,7 +801,7 @@ print $out;
         <p style="text-align: center;">We &hearts; <a href="http://www.tumblr.com/">Tumblr</a>. Don't send spam. &mdash; <a href="http://ijulien.com/" title="ijulien" target="_blank">&infin;julien</a> &amp; <a href="http://maymay.net/">Meitar</a></p>
 
         <input type="hidden" name="action" value="update" />
-        <input type="hidden" name="page_options" value="tumblrize_tumblr_email,tumblrize_tumblr_password,tumblrize_tumblr_posterous,tumblrize_notify_me,tumblrize_add_permalink,tumblrize_shutoff,tumblrize_tags,tumblrize_add_post_tags,tumblrize_purge_database,tumblrize_tumblr_group,tumblrize_exclude_cats" />
+        <input type="hidden" name="page_options" value="tumblrize_tumblr_email,tumblrize_tumblr_password,tumblrize_tumblr_posterous,tumblrize_notify_me,tumblrize_add_permalink,tumblrize_shutoff,tumblrize_default_type,tumblrize_tags,tumblrize_add_post_tags,tumblrize_purge_database,tumblrize_tumblr_group,tumblrize_exclude_cats" />
         <p class="submit">
             <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
         </p>
