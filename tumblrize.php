@@ -280,9 +280,9 @@ class TumblrizePlugin {
                 add_post_meta($post_ID, 'tumblrize_post-id', $r['result'], true);
             } else if ($r && $r['status'] === 403) { // Authentication failed.
                 $this->add_admin_message('error',
-                    'Tumblrize could not crosspost this entry because Tumblr has rejected your username or password.');
+                    'Tumblrize could not crosspost this entry. Tumblr responded with: ' . htmlentities($r['result']), ENT_QUOTES, 'UTF-8');
                 $this->add_admin_message('updated',
-                    'Are you sure you entered your Tumblr email and password correctly? Tumblrize is having trouble accessing your account.');
+                    'Are you sure you entered your Tumblr email and password correctly?');
             } else if ($r && $r['status'] === 400) { // Tumblr errors.
                 $this->add_admin_message('error',
                     'Tumblr experienced errors trying to save the data we sent it.');
