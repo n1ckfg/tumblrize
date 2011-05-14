@@ -133,8 +133,8 @@ class TumblrizePlugin {
 
         if ( get_option('tumblrize_add_permalink') ) {
             $postlink = get_permalink($post_ID);
-            $post_body .= "<p class=\"tumblrize-permalink\"><a href=\"$postlink\" title=\"Go to original post at " .
-                          get_bloginfo('name') . '" rel="bookmark">Original Article</a></p>';
+            // Replace %posttitle% and also %permalink% (in one dirty line).
+            $post_body .= str_replace('%posttitle%', $post_title, str_replace('%permalink%', $postlink, get_option('tumblrize_permalink_text')));
         }
 
         if ( get_option('tumblrize_tags') ) {
@@ -776,7 +776,20 @@ print $out;
                 <th scope="row"><label for="tumblrize_add_permalink">Also add link to the original post?</label></th>
                 <td>
                     <input type="checkbox" id="tumblrize_add_permalink" name="tumblrize_add_permalink" value="tumblrize_add_permalink_on" <?php if ( get_option('tumblrize_add_permalink') == "tumblrize_add_permalink_on" ) { echo 'checked="checked"'; }?> />
-                    <span class="description">When enabled, Tumblrize will append a paragraph with a link back to the original post on this blog in any crossposted entries.</span>
+                    <span class="description">When enabled, Tumblrize will <a href="#tumblrize_permalink_text" onclick="document.getElementById('tumblrize_permalink_text').focus()">append some text or HTML</a> with a link back to the original post on this blog in any crossposted entries.</span>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row"><label for="tumblrize_permalink_text">Permalink link-back text:</label>
+                <td>
+                <?php
+                // Default permalink text.
+                $x = "<p class=\"tumblrize-linkback\"><a href=\"%permalink%\" title=\"Go to original post at " .
+                              get_bloginfo('name') . '" rel="bookmark">%posttitle%</a></p>';
+                ?>
+                    <textarea id="tumblrize_permalink_text" name="tumblrize_permalink_text" rows="3" cols="80"><?php echo get_option('tumblrize_permalink_text', $x); ?></textarea>
+                    <br /><span class="description">Text or HTML for the link back to your original post. You can use <code>%permalink%</code> and <code>%posttitle%</code> as placeholders for the cross-posted link, and title, respectively. (E.g., <code>&lt;p class="tumblrize-linkback"&gt;Go to original post at &lt;a href="%permalink%"&gt;%posttitle%&lt;/a&gt;.&lt;/p&gt;</code>.)</span>
                 </td>
             </tr>
 
@@ -810,7 +823,7 @@ print $out;
         <p style="text-align: center;">We &hearts; <a href="http://www.tumblr.com/">Tumblr</a>. Don't send spam. &mdash; <a href="http://ijulien.com/" title="ijulien" target="_blank">&infin;julien</a> &amp; <a href="http://maymay.net/">Meitar</a></p>
 
         <input type="hidden" name="action" value="update" />
-        <input type="hidden" name="page_options" value="tumblrize_tumblr_email,tumblrize_tumblr_password,tumblrize_tumblr_posterous,tumblrize_notify_me,tumblrize_add_permalink,tumblrize_shutoff,tumblrize_default_type,tumblrize_tags,tumblrize_add_post_tags,tumblrize_purge_database,tumblrize_tumblr_group,tumblrize_exclude_cats" />
+        <input type="hidden" name="page_options" value="tumblrize_tumblr_email,tumblrize_tumblr_password,tumblrize_tumblr_posterous,tumblrize_notify_me,tumblrize_add_permalink,tumblrize_permalink_text,tumblrize_shutoff,tumblrize_default_type,tumblrize_tags,tumblrize_add_post_tags,tumblrize_purge_database,tumblrize_tumblr_group,tumblrize_exclude_cats" />
         <p class="submit">
             <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
         </p>
