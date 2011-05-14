@@ -74,18 +74,27 @@ class TumblrizePlugin {
     //       question is ignored in favor of the global options in the plugin because the
     //       deletion operation is a link whereas the publish operation submits a form.
     function isTumblrizeablePost ($post_ID = NULL) {
-        if (!isset($_POST['tumblrize_do-tumblrize']) && $_GET['action'] === 'delete') {
-            // this is deletion operation and should be tumblrizeable
-            // only if Tumblrize is turned on globally
-            return (get_option('tumblrize_shutoff') === '') ? true : false;
-        } else if ($post_ID !== NULL && in_category(get_option('tumblrize_exclude_cats'), $post_ID)) {
-            // Don't crosspost items placed into these specific categories.
+        // 
+        // NOTE: THE ORDER OF THE FOLLOWING IF STATEMENTS IS VERY IMPORTANT.
+        //
+
+        // If the post is in excluded categories, do not cross-post it no matter what.
+        if ($post_ID !== NULL && in_category(get_option('tumblrize_exclude_cats'), $post_ID)) {
             return false;
-        } else if ($post_ID !== NULL && get_post_meta($post_ID, 'tumblrize_post-future', true)) {
-            // This is a scheduled post that wants to be crossposted.
-            return true;
         }
-        return ($_POST['tumblrize_do-tumblrize']) ? true : false;
+
+        // If the "do-tumblrize" manual override option is here, use it.
+        if (isset($_POST['tumblrize_do-tumblrize'])) {
+            return ($_POST['tumblrize_do-tumblrize']) ? true : false;
+        }
+
+        // If the shutoff is enabled, do not cross-post anything.
+        if (get_option('tumblrize_shutoff')) {
+            return false;
+        }
+
+        // If none of the above criteria match, go ahead and cross-post.
+        return true;
     }
 
     /**
@@ -116,8 +125,8 @@ class TumblrizePlugin {
         // Do not crosspost if not requested for this post.
         if (!$this->isTumblrizeablePost($post_ID)) { return $post_ID; }
 
-        $post_group = get_post_meta($post_ID, 'tumblrize_post-group', true);
-        $post_type  = get_post_meta($post_ID, 'tumblrize_post-type', true);
+        $post_group = (get_post_meta($post_ID, 'tumblrize_post-group', true)) ? get_post_meta($post_ID, 'tumblrize_post-group', true) : get_option('tumblrize_tumblr_group');
+        $post_type  = (get_post_meta($post_ID, 'tumblrize_post-type', true)) ? get_post_meta($post_ID, 'tumblrize_post-type', true) : get_option('tumblrize_default_type');
         $post_date  = $post->post_date_gmt . ' GMT'; // use UTC; avoid TZ issues
         $post_title = html_entity_decode($post->post_title);
         $post_body  = wpautop(str_replace('\"', "", html_entity_decode($post->post_content)));
