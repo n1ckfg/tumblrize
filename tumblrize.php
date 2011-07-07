@@ -318,14 +318,19 @@ class TumblrizePlugin {
      * @see tumblrize_to_tumblr(string $do, array $data)
      */
     function delete_post ($post_ID) {
+        // SRSLY? What the fuck, WordPress 3.2?
+        if ($post_ID > (int) $_GET['post']) {
+            $post_ID--; // fix WordPress 3.2's off-by-one error?
+        }
         if ($this->isTumblrizeablePost()) {
-            return $this->tumblrize_to_tumblr('delete', array(
+            $r = $this->tumblrize_to_tumblr('delete', array(
                                      'email' => $this->tusername,
                                      'password' => $this->tpassword,
                                      'post-id' => get_post_meta($post_ID, 'tumblrize_post-id', true),
                                      'group' => get_post_meta($post_ID, 'tumblrize_post-group', true),
                                      'generator' => $this->generator
                                 ));
+            return $r;
         }
     }
 
