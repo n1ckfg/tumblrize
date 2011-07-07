@@ -27,6 +27,7 @@ define('WP_DEBUG', true);
 
 if ( get_option('tumblrize_purge_database') ) {
     delete_option('tumblrize_add_permalink');
+    delete_option('tumblrize_permalink_text');
     delete_option('tumblrize_add_post_tags');
     delete_option('tumblrize_notify_me');
     delete_option('tumblrize_purge_database');
