@@ -128,8 +128,8 @@ class TumblrizePlugin {
         $post_group = (get_post_meta($post_ID, 'tumblrize_post-group', true)) ? get_post_meta($post_ID, 'tumblrize_post-group', true) : get_option('tumblrize_tumblr_group');
         $post_type  = (get_post_meta($post_ID, 'tumblrize_post-type', true)) ? get_post_meta($post_ID, 'tumblrize_post-type', true) : get_option('tumblrize_default_type');
         $post_date  = $post->post_date_gmt . ' GMT'; // use UTC; avoid TZ issues
-        $post_title = html_entity_decode($post->post_title);
-        $post_body  = wpautop(str_replace('\"', "", html_entity_decode($post->post_content)));
+        $post_title = html_entity_decode($post->post_title, ENT_QUOTES, 'UTF-8');
+        $post_body  = wpautop(str_replace('\"', "", html_entity_decode($post->post_content, ENT_QUOTES, 'UTF-8')));
 
         if ( get_option('tumblrize_add_permalink') ) {
             $postlink = get_permalink($post_ID);
